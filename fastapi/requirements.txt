@@ -1,0 +1,10 @@
+# Core FastAPI dependencies
+fastapi==0.121.1
+uvicorn==0.38.0
+
+# Database
+sqlalchemy==2.0.44
+psycopg2-binary==2.9.11
+
+# Type hints (included with Python 3.9+, but explicit for older versions)
+typing-extensions==4.15.0
