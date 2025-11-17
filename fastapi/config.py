@@ -1,15 +1,16 @@
+"""
+Configuration for database connections and session management
+"""
+
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 import os
+from dotenv import load_dotenv
 
-LOCAL_DATABASE_URL = os.getenv("LOCAL_DATABASE_URL")
-RAILWAY_DATABASE_URL = os.getenv("RAILWAY_DATABASE_URL")
+load_dotenv(dotenv_path="../.env")  # provide correct path to your .env file
 
-if LOCAL_DATABASE_URL is None:
-    raise ValueError("LOCAL_DATABASE_URL environment variable must be set")
-
-if RAILWAY_DATABASE_URL is None:
-    raise ValueError("RAILWAY_DATABASE_URL environment variable must be set")
+LOCAL_DATABASE_URL = os.environ["LOCAL_DATABASE_URL"]
+RAILWAY_DATABASE_URL = os.environ["RAILWAY_DATABASE_URL"]
 
 engine = create_engine(RAILWAY_DATABASE_URL)  # Use Railway database for engine
 

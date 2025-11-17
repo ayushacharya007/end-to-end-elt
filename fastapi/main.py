@@ -1,3 +1,8 @@
+"""
+Script to create FastAPI application with basic authentication and database access
+Run this to start the FastAPI server
+"""
+
 from fastapi import FastAPI, Depends, HTTPException, status, Query
 from fastapi.security import HTTPBasicCredentials, HTTPBasic
 from config import session, engine
@@ -5,6 +10,9 @@ from sqlalchemy.orm import Session
 from typing import Annotated
 import model
 import os
+from dotenv import load_dotenv
+
+load_dotenv(dotenv_path="../.env")  # provide correct path to your .env file
 
 app = FastAPI()
 
@@ -12,8 +20,8 @@ model.Base.metadata.create_all(bind=engine)
 
 security = HTTPBasic()
 
-username = os.getenv("BASIC_AUTH_USERNAME")
-password = os.getenv("BASIC_AUTH_PASSWORD")
+username = os.environ["BASIC_AUTH_USERNAME"]
+password = os.environ["BASIC_AUTH_PASSWORD"]
 
 if username is None or password is None:
     raise ValueError("BASIC_AUTH_USERNAME and BASIC_AUTH_PASSWORD environment variables must be set")

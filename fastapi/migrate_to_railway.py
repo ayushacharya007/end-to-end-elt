@@ -6,18 +6,22 @@ import os
 import dlt
 import psycopg2
 from dotenv import load_dotenv
+
 load_dotenv(dotenv_path="../.env") # provide correct path to your .env file
 
 # Local database connection details
-local_db_url = os.getenv("LOCAL_DATABASE_URL")
-railway_db_url = os.getenv("RAILWAY_DATABASE_URL")
+local_db_url = os.environ["LOCAL_DATABASE_URL"]
+railway_db_url = os.environ["RAILWAY_DATABASE_URL"]
+DATASET_NAME = os.environ["DATASET_NAME"]
+PIPELINE_NAME = os.environ["PIPELINE_NAME"]
+DESTINATION = os.environ["DESTINATION"]
 
-if not local_db_url:
-    raise ValueError("LOCAL_DATABASE_URL environment variable not set")
-
-if not railway_db_url:
-    print("RAILWAY_DATABASE_URL environment variable not set")
-    raise ValueError("RAILWAY_DATABASE_URL environment variable not set")
+# Use dlt to load data into Railway
+pipeline = dlt.pipeline(
+    pipeline_name=PIPELINE_NAME,
+    destination=DESTINATION,
+    dataset_name=DATASET_NAME,
+)
 
 # Connect to local database using psycopg2
 local_conn = psycopg2.connect(local_db_url)
@@ -32,18 +36,67 @@ for table in tables:
     if not rows:
         print(f"No data found in table {table}, skipping...")
         continue
+    
+    if not local_cur.description:
+        raise ValueError(f"No description available for table {table}")
+    
+    cols = [desc[0] for desc in local_cur.description]
+    
+    data = [dict(zip(cols, row)) for row in rows]
+        
+    print(f"Migrating {len(rows)} records from table {table}...")
 
-    # Use dlt to load data into Railway
-    pipeline = dlt.pipeline(
-        pipeline_name="railway_migration_pipeline",
-        destination="postgresql",
-        dataset_name="faker_dlt_dataset",
-        dev_mode=True,
-    )
-
-    # Run the pipeline to load data
-    load_info = pipeline.run(table, write_disposition="append")
-    print(f"Info: {load_info}")
+    
+    if table == 'user':
+        # Using SCD2 strategy for user table to track changes over time in user data
+        load_info = pipeline.run(data, 
+                                 table_name=table, 
+                                 write_disposition={
+                                        "disposition": "merge",
+                                        "strategy": "scd2",
+                                        "validity_column_names": ["valid_from", "valid_to"]
+                                 },
+                                 primary_key=['user_id']
+                                )
+        print(load_info)
+        
+    elif table == 'subscription':
+        # Using SCD2 strategy for subscription table to track changes over time in subscriptions
+        load_info = pipeline.run(data, 
+                                 table_name=table, 
+                                 write_disposition={
+                                        "disposition": "merge",
+                                        "strategy": "scd2",
+                                        "validity_column_names": ["valid_from", "valid_to"]
+                                 },
+                                 primary_key=['user_id', 'plan_id']
+                                )
+        print(load_info)
+        
+    elif table == 'plan':
+        # Using SCD2 strategy for plan table to track changes over time in plans
+        load_info = pipeline.run(data, 
+                                 table_name=table, 
+                                 write_disposition={
+                                        "disposition": "merge",
+                                        "strategy": "scd2",
+                                        "validity_column_names": ["valid_from", "valid_to"]
+                                 },
+                                 primary_key=['plan_id']
+                                )
+        print(load_info)
+        
+    elif table == 'usage':
+        # Using upsert strategy for usage table as we want to update existing usage records
+        load_info = pipeline.run(data, 
+                                 table_name=table, 
+                                 write_disposition={
+                                        "disposition": "merge",
+                                        "strategy": "upsert"
+                                 },
+                                 primary_key=['usage_id']
+                                )
+        print(load_info)
 
 local_cur.close()
 local_conn.close()
@@ -57,8 +110,12 @@ tables = ['user', 'plan', 'subscription', 'usage']
 for table in tables:
     cur.execute(f"SELECT COUNT(*) FROM faker_dlt_dataset.{table}")
     result = cur.fetchone()
-    count = result[0] if result else 0
-    print(f"Table {table} has {count} records.")
+    
+    if result:
+        print(f"Table {table} has {result[0]} records in Railway database.")
+    else:
+        print(f"Table {table} has no records in Railway database.")
+    
 
 cur.close()
 conn.close()

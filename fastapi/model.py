@@ -1,3 +1,7 @@
+"""
+SQLAlchemy models for the faker_dlt_dataset schema
+"""
+
 from sqlalchemy import Column, Integer, String, Float, JSON, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -45,7 +49,7 @@ class Usage(Base):
     usage_id = Column(String, primary_key=True, index=True)
     user_id = Column(String, ForeignKey('faker_dlt_dataset.user.user_id'))
     plan_id = Column(Integer, ForeignKey('faker_dlt_dataset.plan.plan_id'))
-    date = Column(String)
+    usage_date = Column(String)
     actions_performed = Column(Integer)
     storage_used_mb = Column(Float)
     api_calls = Column(Integer)
