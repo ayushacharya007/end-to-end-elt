@@ -11,13 +11,11 @@
 
 - [Overview](#-overview)
 - [Architecture](#-architecture)
-- [Features](#-features)
-- [Quick Start](#-quick-start)
+- [Technology Stack](#️-technology-stack)
 - [API Documentation](#-api-documentation)
-- [Data Schema](#-data-schema)
-- [Deployment](#-deployment)
-- [Development](#-development)
-- [Configuration](#-configuration)
+- [Data Schema](#️-data-schema)
+- [Development](#️-development)
+- [Configuration](#️-configuration)
 
 ## 🎯 Overview
 
@@ -28,7 +26,7 @@ This project demonstrates a complete data engineering workflow:
 3. **Transform**: Query and expose data through FastAPI endpoints
 4. **Deploy**: Production deployment on Railway with PostgreSQL backend
 
-**Live Demo**: `https://fastapi-production-15f1.up.railway.app`
+**Live Demo**: `https://app-production-82bb.up.railway.app/`
 
 ## 🏗️ Architecture
 
@@ -58,7 +56,7 @@ This project demonstrates a complete data engineering workflow:
 └─────────────────┘
 ```
 
-### Technology Stack
+## 🛠️ Technology Stack
 
 | Component           | Technology           | Purpose                                      |
 | ------------------- | -------------------- | -------------------------------------------- |
