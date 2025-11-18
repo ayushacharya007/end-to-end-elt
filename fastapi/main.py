@@ -16,7 +16,9 @@ load_dotenv(dotenv_path="../.env")  # provide correct path to your .env file
 
 app = FastAPI()
 
-model.Base.metadata.create_all(bind=engine)
+# Only create tables when explicitly enabled (e.g., local dev)
+if os.getenv("RUN_CREATE_ALL", "false").lower() == "true":
+    model.Base.metadata.create_all(bind=engine)
 
 security = HTTPBasic()
 

@@ -4,8 +4,8 @@ Configuration for database connections and session management
 
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
-import os
 from dotenv import load_dotenv
+import os
 
 load_dotenv(dotenv_path="../.env")  # provide correct path to your .env file
 

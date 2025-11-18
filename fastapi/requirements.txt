@@ -8,3 +8,4 @@ psycopg2-binary==2.9.11
 
 # Type hints (included with Python 3.9+, but explicit for older versions)
 typing-extensions==4.15.0
+python-dotenv>=1.2.1
