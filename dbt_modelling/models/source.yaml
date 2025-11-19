@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: fake_source
+    database: awsdatacatalog
+    schema: ayush_fastapi_data
+    tables:
+      - name: users
+      - name: plans
+      - name: subscriptions
+      - name: usages
