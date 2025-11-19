@@ -14,4 +14,3 @@ with dim_users as (
 )
 
 select * from dim_users
-limit 10
