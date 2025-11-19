@@ -1,0 +1,63 @@
+version: 2
+
+models:
+  - name: dim_users
+    description: "A dimension table containing customer information."
+    columns:
+      - name: user_id
+        description: "The unique identifier for each customer."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: full_name
+        description: "The full name of the customer, combining first and last names."
+        data_tests:
+          - not_null
+
+      - name: email
+        description: "The email address of the customer."
+        data_tests:
+          - not_null
+
+      - name: region
+        description: "The geographical region of the customer (e.g., North America, Europe)."
+        data_tests:
+          - not_null
+          - accepted_values:
+              values:
+                [
+                  "North America",
+                  "Europe",
+                  "Asia",
+                  "South America",
+                  "Africa",
+                  "Oceania",
+                ]
+
+      - name: plan_id
+        description: "The subscription plan identifier associated with the customer."
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('dim_plans')
+              field: plan_id
+
+      - name: signup_date
+        description: "The date when the customer signed up."
+        data_tests:
+          - not_null
+
+      - name: referral_source
+        description: "The source through which the customer was referred (e.g., social media, paid ads)."
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ["web search", "paid ads", "social media", "referral"]
+
+      - name: valid_from
+        description: "The start date of the record's validity period."
+        data_tests:
+          - not_null
+      - name: valid_to
+        description: "The end date of the record's validity period."
