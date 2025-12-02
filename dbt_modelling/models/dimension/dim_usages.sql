@@ -6,7 +6,8 @@ with dim_usages as (
         {{ adapter.quote("usage_date") }},
         {{ adapter.quote("actions_performed") }},
         {{ adapter.quote("active_minutes") }},
-        {{ adapter.quote("api_calls") }}
+        {{ adapter.quote("api_calls") }},
+        {{ adapter.quote("storage_used_mb") }}
 
     from {{ ref('stg_usages') }}
 )
