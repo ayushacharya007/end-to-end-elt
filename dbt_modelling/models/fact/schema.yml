@@ -1,0 +1,45 @@
+version: 2
+
+models:
+    - name: fact_usages
+      description: "This table contains the fact usages data aggregated from staging."
+      columns:
+        - name: usage_date
+          description: "The date when the usage was recorded."
+          tests:
+            - not_null
+            - unique
+        - name: user_id
+          description: "The identifier for the user associated with the usage."
+          tests:
+            - not_null
+        - name: total_actions
+          description: "The total number of actions performed by the user on the given date."
+          tests:
+            - not_null
+            - accepted_values:
+                values: [0, 1000000]
+        - name: total_api_calls
+          description: "The total number of API calls made by the user on the given date."
+          tests:
+            - not_null
+            - accepted_values:
+                values: [0, 1000000]
+        - name: total_storage_used_mb
+          description: "The total storage used by the user in megabytes on the given date."
+          tests:
+            - not_null
+            - accepted_values:
+                values: [0, 100000000]
+        - name: total_active_minutes
+          description: "The total active minutes of the user on the given date."
+          tests:
+            - not_null
+            - accepted_values:
+                values: [0, 1440]
+        - name: session_count
+          description: "The count of occurrences of each user on the same date."
+          tests:
+            - not_null
+            - accepted_values:
+                values: [1, 1000]
