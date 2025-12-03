@@ -1,6 +1,10 @@
 """
 Generate plan features bridge table
 """
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import pandas as pd
 from models import PlanFeature
 from data_generation.generate_plans import generate_plans
@@ -18,7 +22,7 @@ def generate_plan_features() -> pd.DataFrame:
         # Free plan (plan_id=1)
         (1, "community support"),
         (1, "basic dashboard"),
-        (1, "email notifications"),
+        (1, "email notifications"), 
         (1, "7-day data retention"),
         
         # Starter plan (plan_id=2)
