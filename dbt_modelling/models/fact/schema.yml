@@ -42,3 +42,28 @@ models:
             - not_null
             - accepted_values:
                 values: [1, 1000]
+
+  - name: fct_subscriptions
+      description: "This table contains the fact subscriptions data aggregated from staging."
+      columns:
+        - name: user_id
+          description: "The identifier for the user associated with the subscription."
+          tests:
+            - not_null
+            - relationships:
+                to: ref('dim_users')
+                field: user_id
+
+        - name: plan_id
+          description: "The identifier for the subscription plan."
+          tests:
+            - not_null
+            - relationships:
+                to: ref('dim_plans')
+                field: plan_id
+
+        - name: total_amount_paid
+          description: "The total amount paid for the subscription."
+          tests:
+            - not_null
+            
