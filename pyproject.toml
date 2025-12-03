@@ -24,4 +24,5 @@ dependencies = [
     "boto3>=1.40.70",
     "dbt-core>=1.10.15",
     "dbt-athena>=1.9.5",
+    "fastapi-pagination>=0.15.0",
 ]
