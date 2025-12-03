@@ -3,6 +3,31 @@ Pydantic models for fake data generation
 """
 from pydantic import BaseModel, EmailStr
 from typing import List
+
+
+# Lookup/Reference Table Models
+class Region(BaseModel):
+    region_id: int
+    region_name: str
+
+
+class ReferralSource(BaseModel):
+    referral_source_id: int
+    source_name: str
+
+
+class PaymentMethod(BaseModel):
+    payment_method_id: int
+    method_name: str
+
+
+class PlanFeature(BaseModel):
+    feature_id: int
+    plan_id: int
+    feature_name: str
+
+
+# Main Entity Models (Normalized)
 class User(BaseModel):
     user_id: str
     first_name: str
@@ -10,8 +35,8 @@ class User(BaseModel):
     email: EmailStr
     signup_date: str
     plan_id: int
-    region: str
-    referral_source: str
+    region_id: int  # FK to regions
+    referral_source_id: int  # FK to referral_sources
 
 
 class Plan(BaseModel):
@@ -22,7 +47,6 @@ class Plan(BaseModel):
     api_limit: int
     storage_limit_mb: int
     project_limit: int | str
-    features: List[str]
 
 
 class Subscription(BaseModel):
@@ -31,16 +55,16 @@ class Subscription(BaseModel):
     plan_id: int
     start_date: str
     end_date: str
-    payment_method: str
+    payment_method_id: int  # FK to payment_methods
     status: str
 
 
 class Usage(BaseModel):
     usage_id: str
     user_id: str
+    subscription_id: str  # FK to subscriptions
     usage_date: str
     actions_performed: int
     storage_used_mb: float
     api_calls: int
     active_minutes: int
-    plan_id: int
