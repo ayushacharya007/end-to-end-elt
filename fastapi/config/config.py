@@ -35,7 +35,7 @@ TABLE_CONFIGS = {
         "write_disposition": {"disposition": "merge", "strategy": "upsert"},
         "primary_key": ["region_id"],
     },
-    "referral_sources": {
+    "referral": {
         "write_disposition": {"disposition": "merge", "strategy": "upsert"},
         "primary_key": ["referral_source_id"],
     },
@@ -43,7 +43,7 @@ TABLE_CONFIGS = {
         "write_disposition": {"disposition": "merge", "strategy": "upsert"},
         "primary_key": ["payment_method_id"],
     },
-    "plan_features": {
+    "features": {
         "write_disposition": {"disposition": "merge", "strategy": "upsert"},
         "primary_key": ["feature_id"],
     },    

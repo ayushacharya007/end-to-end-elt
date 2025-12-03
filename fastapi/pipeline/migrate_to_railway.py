@@ -3,13 +3,16 @@ Script to migrate data from local PostgreSQL to Railway PostgreSQL
 Run this after adding PostgreSQL to Railway
 """
 import os
+import sys
 import dlt
 import psycopg2
 from dotenv import load_dotenv
-from config import TABLE_CONFIGS
 
 # --- Configuration ---
-load_dotenv(dotenv_path="../.env")
+load_dotenv(dotenv_path="../../.env")
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+from config.config import TABLE_CONFIGS
 
 # Environment variables
 LOCAL_DB_URL = os.environ.get("LOCAL_DATABASE_URL")
@@ -26,7 +29,7 @@ def get_data_from_local_db(cursor, table_name):
     """Fetches all rows from a table and returns them as a list of dictionaries."""
     try:
         # Note: Using test_dlt_dataset schema as per new configuration
-        cursor.execute(f"SELECT * FROM test_dlt_dataset.{table_name}")
+        cursor.execute(f"SELECT * FROM {DATASET_NAME}.{table_name}")
         rows = cursor.fetchall()
 
         if not rows:
@@ -42,16 +45,20 @@ def get_data_from_local_db(cursor, table_name):
         print(f"Error fetching data from local table {table_name}: {e}")
         return None
 
-def verify_data_in_railway(cursor, table_name):
+def verify_data_in_railway(connection, table_name):
     """Checks and prints the row count of a table in the Railway database."""
     try:
-        cursor.execute(f"SELECT COUNT(*) FROM test_dlt_dataset.{table_name}")
+        cursor = connection.cursor()
+        cursor.execute(f"SELECT COUNT(*) FROM {DATASET_NAME}.{table_name}")
         result = cursor.fetchone()
+        cursor.close()
+        connection.commit()  # Commit successful query
         if result:
             print(f"Table '{table_name}' has {result[0]} records in Railway database.")
         else:
             print(f"Table '{table_name}' has no records in Railway database.")
     except Exception as e:
+        connection.rollback()  # Rollback on error to prevent transaction abort
         print(f"Error verifying table '{table_name}': {str(e)}")
 
 # --- Main Execution ---
@@ -96,10 +103,9 @@ def main():
         # --- 2. Verify Data in Railway ---
         print("\nMigration completed. Verifying data in Railway database...")
         railway_conn = psycopg2.connect(RAILWAY_DB_URL)
-        railway_cur = railway_conn.cursor()
 
         for table_name in TABLE_CONFIGS:
-            verify_data_in_railway(railway_cur, table_name)
+            verify_data_in_railway(railway_conn, table_name)
             
         print("\nMigration and verification process finished.")
 
