@@ -197,12 +197,12 @@ def generate_usage(user_df: pd.DataFrame, subscription_df: pd.DataFrame) -> pd.D
                 usage = Usage(
                     usage_id=fake.uuid4()[:8],
                     user_id=user_id,
+                    subscription_id=subscription_id,
                     usage_date=current_date.strftime('%Y-%m-%d'),
                     actions_performed=max(1, actions),
                     storage_used_mb=max(0.1, storage_increment),
                     api_calls=max(1, api),
-                    active_minutes=max(1, active_mins),
-                    plan_id=plan_id
+                    active_minutes=max(1, active_mins)
                 )
                 usages.append(usage)
                 usage_count += 1

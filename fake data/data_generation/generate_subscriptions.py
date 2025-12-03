@@ -38,12 +38,13 @@ def generate_subscriptions(user_df: pd.DataFrame) -> pd.DataFrame:
 
         # Determine payment method and end date based on plan
         if plan['plan_name'] == "Free":
-            pm = 'N/A'
+            pm_id = 4  # N/A
             ed = 'N/A'
             status = 'active'
         else:
-            pm = np.random.choice(
-                ['credit card', 'paypal', 'bank transfer'],
+            # Payment method IDs: 1=credit card, 2=paypal, 3=bank transfer
+            pm_id = np.random.choice(
+                [1, 2, 3],
                 p=[0.60, 0.30, 0.10]
             )
             ed = sd + pd.DateOffset(months=1)
@@ -60,7 +61,7 @@ def generate_subscriptions(user_df: pd.DataFrame) -> pd.DataFrame:
             plan_id=pid,
             start_date=sd.strftime('%Y-%m-%d'),
             end_date=ed if ed == 'N/A' else ed.strftime('%Y-%m-%d'),
-            payment_method=pm,
+            payment_method_id=pm_id,
             status=st,
         )
         subscriptions.append(subscription)
@@ -119,12 +120,13 @@ def generate_subscriptions(user_df: pd.DataFrame) -> pd.DataFrame:
 
             # Determine payment method and end date for new subscription
             if new_plan['plan_name'] == "Free":
-                new_pm = 'N/A'
+                new_pm_id = 4  # N/A
                 new_end = 'N/A'
                 new_st = 'active'
             else:
-                new_pm = np.random.choice(
-                    ['credit card', 'paypal', 'bank transfer'],
+                # Payment method IDs: 1=credit card, 2=paypal, 3=bank transfer
+                new_pm_id = np.random.choice(
+                    [1, 2, 3],
                     p=[0.60, 0.30, 0.10]
                 )
                 new_end = new_start + pd.DateOffset(months=1)
@@ -141,7 +143,7 @@ def generate_subscriptions(user_df: pd.DataFrame) -> pd.DataFrame:
                 plan_id=new_plan_id,
                 start_date=new_start.strftime('%Y-%m-%d'),
                 end_date=new_end if new_end == 'N/A' else new_end.strftime('%Y-%m-%d'),
-                payment_method=new_pm,
+                payment_method_id=new_pm_id,
                 status=new_st
             )
             subscriptions.append(new_subscription)

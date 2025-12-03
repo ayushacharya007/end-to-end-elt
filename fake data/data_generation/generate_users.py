@@ -36,19 +36,21 @@ def generate_users(count: int = 1000) -> pd.DataFrame:
         for _ in range(count)
     ]
     plan_id = [
-        np.random.choice([1, 2, 3, 4, 5], p=[0.33, 0.27, 0.18, 0.16, 0.06])
-        for _ in range(count)
-    ]
-    region = [
-        fake.random_element(elements=(
-            'North America', 'Europe', 'Asia',
-            'South America', 'Africa', 'Oceania'
-        ))
-        for _ in range(count)
-    ]
-    referral_source = [
         np.random.choice(
-            ['web search', 'paid ads', 'social media', 'referral'],
+            [1, 2, 3, 4, 5], 
+            p=[0.33, 0.27, 0.18, 0.16, 0.06]
+        )
+        for _ in range(count)
+    ]
+    # Region IDs (1-6) with equal probability
+    region_id = [
+        np.random.choice([1, 2, 3, 4, 5, 6])
+        for _ in range(count)
+    ]
+    # Referral source IDs (1=web search, 2=paid ads, 3=social media, 4=referral)
+    referral_source_id = [
+        np.random.choice(
+            [1, 2, 3, 4],
             p=[0.20, 0.45, 0.10, 0.25]
         )
         for _ in range(count)
@@ -62,8 +64,8 @@ def generate_users(count: int = 1000) -> pd.DataFrame:
             email=email[i],
             signup_date=signup_date[i],
             plan_id=plan_id[i],
-            region=region[i],
-            referral_source=referral_source[i]
+            region_id=region_id[i],
+            referral_source_id=referral_source_id[i]
         )
         users.append(user)
 

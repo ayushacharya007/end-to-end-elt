@@ -21,13 +21,7 @@ def generate_plans() -> pd.DataFrame:
             max_users='2',
             api_limit=100,
             storage_limit_mb=500,
-            project_limit=3,
-            features=[
-                "community support",
-                "basic dashboard",
-                "email notifications",
-                "7-day data retention"
-            ]
+            project_limit=3
         ),
         Plan(
             plan_id=2,
@@ -36,14 +30,7 @@ def generate_plans() -> pd.DataFrame:
             max_users='5',
             api_limit=1000,
             storage_limit_mb=5000,
-            project_limit=10,
-            features=[
-                "email support (48h response)",
-                "advanced dashboard",
-                "Slack integration",
-                "30-day data retention",
-                "export to CSV/Excel"
-            ]
+            project_limit=10
         ),
         Plan(
             plan_id=3,
@@ -52,17 +39,7 @@ def generate_plans() -> pd.DataFrame:
             max_users='20',
             api_limit=10000,
             storage_limit_mb=50000,
-            project_limit=50,
-            features=[
-                "priority email support (24h response)",
-                "custom dashboards",
-                "Slack + Google Drive + Dropbox integration",
-                "90-day data retention",
-                "API access",
-                "webhooks",
-                "2FA authentication",
-                "team collaboration tools"
-            ]
+            project_limit=50
         ),
         Plan(
             plan_id=4,
@@ -71,20 +48,7 @@ def generate_plans() -> pd.DataFrame:
             max_users='100',
             api_limit=50000,
             storage_limit_mb=200000,
-            project_limit=200,
-            features=[
-                "24/7 chat + email support",
-                "dedicated account manager",
-                "all integrations (Zapier, Jira, Salesforce, etc.)",
-                "1-year data retention",
-                "advanced API access",
-                "custom webhooks",
-                "SSO (SAML/OAuth)",
-                "role-based access control (RBAC)",
-                "audit logs",
-                "99.9% uptime SLA",
-                "white-label reports"
-            ]
+            project_limit=200
         ),
         Plan(
             plan_id=5,
@@ -93,24 +57,7 @@ def generate_plans() -> pd.DataFrame:
             max_users='unlimited',
             api_limit=250000,
             storage_limit_mb=1000000,
-            project_limit='unlimited',
-            features=[
-                "24/7 phone + chat + email support",
-                "dedicated success engineer",
-                "custom integrations",
-                "unlimited data retention",
-                "unlimited API access",
-                "custom webhooks + event streaming",
-                "advanced SSO (SAML/OAuth/LDAP)",
-                "advanced RBAC + permissions",
-                "real-time audit logs",
-                "99.99% uptime SLA",
-                "custom SLA available",
-                "white-label platform",
-                "on-premise deployment option",
-                "AI-powered analytics",
-                "custom training sessions"
-            ]
+            project_limit='unlimited'
         )
     ]
 
