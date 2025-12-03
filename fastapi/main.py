@@ -64,15 +64,65 @@ def get_db():
 @app.get("/check-tables")
 def check_tables(db: Session = Depends(get_db)):
     try:
-        # Check what tables exist in faker_dlt_dataset schema
+        # Check what tables exist in test_dlt_dataset schema
         from sqlalchemy import inspect
         inspector = inspect(engine)
-        tables = inspector.get_table_names(schema='faker_dlt_dataset')
+        tables = inspector.get_table_names(schema='test_dlt_dataset')
         return {"Table List": tables}
     except Exception as e:
         import traceback
         return {"error": str(e), "traceback": traceback.format_exc()}
 
+# Lookup Table Endpoints
+@app.get("/regions")
+def get_regions(auth = Depends(verify_credentials), db: Session = Depends(get_db)):
+    try:        
+        regions = db.query(model.Region).all()
+        if len(regions) == 0:
+            return {"message": "No regions found."}
+        else:
+            return {"regions": regions}
+    except Exception as e:
+        import traceback
+        return {"error": str(e), "traceback": traceback.format_exc()}
+
+@app.get("/referral-sources")
+def get_referral_sources(auth = Depends(verify_credentials), db: Session = Depends(get_db)):
+    try:        
+        sources = db.query(model.ReferralSource).all()
+        if len(sources) == 0:
+            return {"message": "No referral sources found."}
+        else:
+            return {"referral_sources": sources}
+    except Exception as e:
+        import traceback
+        return {"error": str(e), "traceback": traceback.format_exc()}
+
+@app.get("/payment-methods")
+def get_payment_methods(auth = Depends(verify_credentials), db: Session = Depends(get_db)):
+    try:        
+        methods = db.query(model.PaymentMethod).all()
+        if len(methods) == 0:
+            return {"message": "No payment methods found."}
+        else:
+            return {"payment_methods": methods}
+    except Exception as e:
+        import traceback
+        return {"error": str(e), "traceback": traceback.format_exc()}
+
+@app.get("/plan-features")
+def get_plan_features(auth = Depends(verify_credentials), db: Session = Depends(get_db)):
+    try:        
+        features = db.query(model.PlanFeature).all()
+        if len(features) == 0:
+            return {"message": "No plan features found."}
+        else:
+            return {"plan_features": features}
+    except Exception as e:
+        import traceback
+        return {"error": str(e), "traceback": traceback.format_exc()}
+
+# Main Entity Endpoints
 @app.get("/users")
 def get_users(auth = Depends(verify_credentials),db: Session = Depends(get_db)):
     try:        
@@ -121,4 +171,3 @@ def get_usages(auth = Depends(verify_credentials), db: Session = Depends(get_db)
     except Exception as e:
         import traceback
         return {"error": str(e), "traceback": traceback.format_exc()}
-    
