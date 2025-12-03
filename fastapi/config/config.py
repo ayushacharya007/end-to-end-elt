@@ -21,7 +21,7 @@ if not LOCAL_DATABASE_URL:
 
 # Create SQLAlchemy engine and session for Railway database
 try:
-    engine = create_engine(LOCAL_DATABASE_URL)  # Use Railway database for engine
+    engine = create_engine(RAILWAY_DATABASE_URL)  # Use Railway database for engine
     # Create a configured "Session" class
     session = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 except Exception as e:
