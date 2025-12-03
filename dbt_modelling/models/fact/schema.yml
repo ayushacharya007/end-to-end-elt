@@ -1,19 +1,18 @@
 version: 2
 
 models:
-    - name: fact_usages
+    - name: fct_usages
       description: "This table contains the fact usages data aggregated from staging."
       columns:
         - name: usage_date
           description: "The date when the usage was recorded."
           tests:
             - not_null
-            - unique
         - name: user_id
           description: "The identifier for the user associated with the usage."
           tests:
             - not_null
-        - name: total_actions
+        - name: total_actions_performed
           description: "The total number of actions performed by the user on the given date."
           tests:
             - not_null
