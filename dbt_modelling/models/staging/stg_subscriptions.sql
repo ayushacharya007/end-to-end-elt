@@ -1,7 +1,4 @@
 with subscription_source as (
-  select * from {{ source('fake_source', 'subscriptions') }}
-),
-subscriptions as (
   select
     {{ adapter.quote("subscription_id") }},
     {{ adapter.quote("user_id") }},
@@ -12,7 +9,7 @@ subscriptions as (
     {{ adapter.quote("status") }},
     {{ adapter.quote("valid_from") }},
     {{ adapter.quote("valid_to") }}
-  from subscription_source
+  from {{ source('fake_source', 'subscriptions') }}
 )
-select * from subscriptions
+select * from subscription_source
     

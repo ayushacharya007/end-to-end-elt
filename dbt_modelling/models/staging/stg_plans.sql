@@ -1,7 +1,4 @@
 with plan_source as (
-  select * from {{ source('fake_source', 'plans') }}
-),
-plan as (
   select
     {{ adapter.quote("plan_id") }},
     {{ adapter.quote("plan_name") }},
@@ -10,8 +7,7 @@ plan as (
     {{ adapter.quote("api_limit") }},
     {{ adapter.quote("storage_limit_mb") }},
     {{ adapter.quote("project_limit") }}
-
-  from plan_source
+  from {{ source('fake_source', 'plans') }}
 )
-select * from plan
+select * from plan_source
   

@@ -1,7 +1,4 @@
 with user_source as (
-  select * from {{ source('fake_source', 'users') }}
-),
-users as (
   select
     {{ adapter.quote("user_id") }},
     {{ adapter.quote("first_name") }},
@@ -13,8 +10,7 @@ users as (
     {{ adapter.quote("referral_source_id") }},
     {{ adapter.quote("valid_from") }},
     {{ adapter.quote("valid_to") }}
-
-  from user_source
+  from {{ source('fake_source', 'users') }}
 )
-select * from users
+select * from user_source
     
