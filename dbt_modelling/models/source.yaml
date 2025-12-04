@@ -9,3 +9,8 @@ sources:
       - name: plans
       - name: subscriptions
       - name: usages
+      - name: features
+      - name: payment_methods
+      - name: referrals
+      - name: regions
+      

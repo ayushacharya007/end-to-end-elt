@@ -5,59 +5,166 @@ models:
     description: "A dimension table containing customer information."
     columns:
       - name: user_id
-        description: "The unique identifier for each customer."
+        description: "The unique identifier for each user."
         data_tests:
           - unique
           - not_null
 
       - name: full_name
-        description: "The full name of the customer, combining first and last names."
+        description: "The full name of the user."
         data_tests:
           - not_null
 
       - name: email
-        description: "The email address of the customer."
+        description: "The email address of the user."
+        data_tests:
+          - not_null
+
+      - name: joined_date
+        description: "The date when the user joined the platform."
         data_tests:
           - not_null
 
       - name: region
-        description: "The geographical region of the customer (e.g., North America, Europe)."
+        description: "The region where the user is located."
         data_tests:
           - not_null
           - accepted_values:
-              values:
-                [
-                  "North America",
-                  "Europe",
-                  "Asia",
-                  "South America",
-                  "Africa",
-                  "Oceania",
-                ]
+              values: ["north america", "europe", "asia", "south america", "africa", "oceania"]
+          - relationships:
+              to: ref('stg_regions')
+              field: region_name
 
-      - name: plan_id
-        description: "The subscription plan identifier associated with the customer."
+      - name: subscription_plan
+        description: "The subscription plan of the user."
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ["free", "starter", "professional", "business", "enterprise"]
+          - relationships:
+              to: ref('stg_plans')
+              field: plan_name
+
+      - name: referral_source
+        description: "The source from which the user was referred."
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ["web search", "paid ads", "social media", "friend"]
+          - relationships:
+              to: ref('stg_referrals')
+              field: source_name
+
+      - name: valid_from
+        description: "The date from which the record is valid."
+        data_tests:
+          - not_null
+
+      - name: valid_to
+        description: "The date until which the record is valid."
+
+  - name: dim_subscriptions
+    description: "A dimension table containing subscription information."
+    columns:
+      - name: subscription_id
+        description: "The unique identifier for each subscription."
+        data_tests:
+          - unique
+          - not_null
+
+      - name: user_id
+        description: "The unique identifier for each user."
         data_tests:
           - not_null
           - relationships:
-              to: ref('dim_plans')
-              field: plan_id
+              to: ref('stg_users')
+              field: user_id
 
-      - name: signup_date
-        description: "The date when the customer signed up."
-        data_tests:
-          - not_null
-
-      - name: referral_source
-        description: "The source through which the customer was referred (e.g., social media, paid ads)."
+      - name: plan_name
+        description: "The name of the subscription plan."
         data_tests:
           - not_null
           - accepted_values:
-              values: ["web search", "paid ads", "social media", "referral"]
+              values: ["free", "starter", "professional", "business", "enterprise"]
+          - relationships:
+              to: ref('stg_plans')
+              field: plan_name
 
-      - name: valid_from
-        description: "The start date of the record's validity period."
+      - name: payment_method
+        description: "The payment method used for the subscription."
         data_tests:
           - not_null
+          - accepted_values:
+              values: ["credit card", "bank transfer", "paypal", "n/a"]
+          - relationships:
+              to: ref('stg_payment_methods')
+              field: method_name
+
+      - name: start_date
+        description: "The start date of the subscription."
+        data_tests:
+          - not_null
+
+      - name: end_date
+        description: "The end date of the subscription."
+
+      - name: status
+        description: "The status of the subscription."
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ["active", "expired"]
+
+      - name: valid_from
+        description: "The date from which the record is valid."
+        data_tests:
+          - not_null
+
       - name: valid_to
-        description: "The end date of the record's validity period."
+        description: "The date until which the record is valid."
+
+  - name: dim_plans
+    description: "A dimension table containing plan information."
+    columns:
+      - name: plan_id
+        description: "The unique identifier for each plan."
+        data_tests:
+          - not_null
+
+      - name: plan_name
+        description: "The name of the plan."
+        data_tests:
+          - not_null
+          - accepted_values:
+              values: ["free", "starter", "professional", "business", "enterprise"]
+
+      - name: monthly_fee
+        description: "The monthly fee of the plan."
+        data_tests:
+          - not_null
+
+      - name: max_users
+        description: "The maximum number of users allowed in the plan."
+        data_tests:
+          - not_null
+
+      - name: api_limit
+        description: "The API limit of the plan."
+        data_tests:
+          - not_null
+
+      - name: storage_limit_mb
+        description: "The storage limit of the plan in MB."
+        data_tests:
+          - not_null
+
+      - name: project_limit
+        description: "The project limit of the plan."
+
+      - name: feature_name
+        description: "The feature name of the plan."
+        data_tests:
+          - not_null
+          - relationships:
+              to: ref('stg_features')
+              field: feature_name
