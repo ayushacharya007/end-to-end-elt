@@ -1,69 +1,76 @@
 version: 2
 
 models:
-    - name: fct_usages
-      description: "This table contains the fact usages data aggregated from staging."
-      columns:
-        - name: usage_date
-          description: "The date when the usage was recorded."
-          tests:
-            - not_null
-        - name: user_id
-          description: "The identifier for the user associated with the usage."
-          tests:
-            - not_null
-        - name: total_actions_performed
-          description: "The total number of actions performed by the user on the given date."
-          tests:
-            - not_null
-            - accepted_values:
-                values: [0, 1000000]
-        - name: total_api_calls
-          description: "The total number of API calls made by the user on the given date."
-          tests:
-            - not_null
-            - accepted_values:
-                values: [0, 1000000]
-        - name: total_storage_used_mb
-          description: "The total storage used by the user in megabytes on the given date."
-          tests:
-            - not_null
-            - accepted_values:
-                values: [0, 100000000]
-        - name: total_active_minutes
-          description: "The total active minutes of the user on the given date."
-          tests:
-            - not_null
-            - accepted_values:
-                values: [0, 1440]
-        - name: session_count
-          description: "The count of occurrences of each user on the same date."
-          tests:
-            - not_null
-            - accepted_values:
-                values: [1, 1000]
+  - name: fct_usages
+    description: "This table contains the fact usages data aggregated from staging."
+    columns:
+      - name: usage_date
+        description: "The date when the usage was recorded."
+        data_tests:
+          - not_null
 
-  - name: fct_subscriptions
-      description: "This table contains the fact subscriptions data aggregated from staging."
-      columns:
-        - name: user_id
-          description: "The identifier for the user associated with the subscription."
-          tests:
-            - not_null
-            - relationships:
+      - name: user_id
+        description: "The identifier for the user associated with the usage."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
                 to: ref('dim_users')
                 field: user_id
 
-        - name: plan_id
-          description: "The identifier for the subscription plan."
-          tests:
-            - not_null
-            - relationships:
-                to: ref('dim_plans')
-                field: plan_id
+      - name: subscription_id
+        description: "The identifier for the subscription associated with the usage."
+        data_tests:
+          - not_null
+          - relationships:
+              arguments:
+                to: ref('dim_subscriptions')
+                field: subscription_id
 
-        - name: total_amount_paid
-          description: "The total amount paid for the subscription."
-          tests:
-            - not_null
-            
+      - name: plan_name
+        description: "The name of the plan associated with the subscription."
+        data_tests:
+          - not_null
+          - accepted_values:
+              values:
+                ["free", "starter", "professional", "business", "enterprise"]
+          - relationships:
+              arguments:
+                to: ref('dim_subscriptions')
+                field: plan_name
+
+      - name: total_actions_performed
+        description: "The total number of actions performed by the user on the given date."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+
+      - name: total_active_minutes
+        description: "The total active minutes of the user on the given date."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+
+      - name: total_api_calls
+        description: "The total number of API calls made by the user on the given date."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true
+
+      - name: total_storage_used_mb
+        description: "The total storage used by the user in megabytes on the given date."
+        data_tests:
+          - not_null
+          - dbt_utils.accepted_range:
+              arguments:
+                min_value: 0
+                inclusive: true

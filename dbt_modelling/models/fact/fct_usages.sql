@@ -1,16 +1,20 @@
-with fct_usages as(
+with combined as (
     select 
-        usage_date,
-        user_id,
-        plan_id,
-        sum(active_minutes) as total_active_minutes,
-        sum(api_calls) as total_api_calls,
-        sum(actions_performed) as total_actions_performed,
-        round(sum(storage_used_mb), 2) as total_storage_used_mb,
-        count(*) as session_count
-    from {{ ref('dim_usages') }}
-    group by 1, 2, 3
+        sug.usage_date,
+        u.user_id,
+        s.subscription_id,
+        s.plan_name,
+        sum(sug.actions_performed) as total_actions_performed,
+        sum(sug.active_minutes) as total_active_minutes,
+        sum(sug.api_calls) as total_api_calls,
+        sum(sug.storage_used_mb) as total_storage_used_mb
+    from {{ ref('stg_usages') }} sug
+    left join {{ ref('dim_users') }} du on sug.user_id = du.user_id
+    left join {{ ref('dim_subscriptions') }} ds on sug.subscription_id = ds.subscription_id
+    group by 
+        sug.usage_date,
+        du.user_id,
+        ds.subscription_id,
+        ds.plan_name
 )
-
-select * from fct_usages
-
+select * from combined
