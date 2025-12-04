@@ -14,6 +14,7 @@ PASSWORD = os.environ["BASIC_AUTH_PASSWORD"]
 SOURCES = {
     "users": {
         "path": "users",
+        "paginated": True,  # Uses fastapi_pagination
         "write_disposition": {
             "disposition": "merge",
             "strategy": "scd2",
@@ -23,6 +24,7 @@ SOURCES = {
     },
     "plans": {
         "path": "plans",
+        "paginated": False,  # Returns all records
         "write_disposition": {
             "disposition": "merge",
             "strategy": "upsert"
@@ -31,6 +33,7 @@ SOURCES = {
     },
     "subscriptions": {
         "path": "subscriptions",
+        "paginated": True,  # Uses fastapi_pagination
         "write_disposition": {
             "disposition": "merge",
             "strategy": "scd2",
@@ -40,12 +43,49 @@ SOURCES = {
     },
     "usages": {
         "path": "usages",
+        "paginated": True,  # Uses fastapi_pagination
         "write_disposition": {
             "disposition": "merge",
             "strategy": "upsert"
         },
         "primary_key": "usage_id",
     },
+    "features": {
+        "path": "plan-features",
+        "paginated": False,  # Returns all records
+        "write_disposition": {
+            "disposition": "merge",
+            "strategy": "upsert"
+        },
+        "primary_key": "feature_id",
+    },
+    "payment_methods": {
+        "path": "payment-methods",
+        "paginated": False,  # Returns all records
+        "write_disposition": {
+            "disposition": "merge",
+            "strategy": "upsert"
+        },
+        "primary_key": "payment_method_id",
+    },
+    "referrals": {
+        "path": "referral-sources",
+        "paginated": False,  # Returns all records
+        "write_disposition": {
+            "disposition": "merge",
+            "strategy": "upsert"
+        },
+        "primary_key": "referral_source_id",
+    },
+    "regions": {
+        "path": "regions",
+        "paginated": False,  # Returns all records
+        "write_disposition": {
+            "disposition": "merge",
+            "strategy": "upsert"
+        },
+        "primary_key": "region_id",
+    }
 }
 
 
