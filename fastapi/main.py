@@ -5,16 +5,21 @@ Run this to start the FastAPI server
 
 from fastapi import FastAPI, Depends, HTTPException, status, Query
 from fastapi.security import HTTPBasicCredentials, HTTPBasic
-from config import session, engine
+from fastapi_pagination.ext.sqlalchemy import paginate
+from fastapi_pagination import Page, add_pagination
+from config.config import session, engine
 from sqlalchemy.orm import Session
+from sqlalchemy import select
 from typing import Annotated
-import model
+from model import model
+from model.schema import User, Subscription, Usage
 import os
 from dotenv import load_dotenv
 
 load_dotenv(dotenv_path="../.env")  # provide correct path to your .env file
 
 app = FastAPI()
+add_pagination(app)
 
 # Only create tables when explicitly enabled (e.g., local dev)
 if os.getenv("RUN_CREATE_ALL", "false").lower() == "true":
@@ -64,61 +69,124 @@ def get_db():
 @app.get("/check-tables")
 def check_tables(db: Session = Depends(get_db)):
     try:
-        # Check what tables exist in faker_dlt_dataset schema
+        # Check what tables exist in test_dlt schema
         from sqlalchemy import inspect
         inspector = inspect(engine)
-        tables = inspector.get_table_names(schema='faker_dlt_dataset')
+        tables = inspector.get_table_names(schema='test_dlt_dataset')
         return {"Table List": tables}
     except Exception as e:
         import traceback
-        return {"error": str(e), "traceback": traceback.format_exc()}
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={"error": str(e), "traceback": traceback.format_exc()}
+        )
 
-@app.get("/users")
-def get_users(auth = Depends(verify_credentials),db: Session = Depends(get_db)):
+# Lookup Table Endpoints
+@app.get("/regions")
+def get_regions(auth = Depends(verify_credentials), db: Session = Depends(get_db)):
     try:        
-        users = db.query(model.User).all()
-        if len(users) == 0:
-            return {"message": "No users found."}
+        regions = db.query(model.Region).all()
+        if len(regions) == 0:
+            return {"message": "No regions found."}
         else:
-            return {"users": users}
+            return {"items": regions}
     except Exception as e:
         import traceback
-        return {"error": str(e), "traceback": traceback.format_exc()}
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={"error": str(e), "traceback": traceback.format_exc()}
+        )
 
-@app.get("/plans")
-def get_plans(auth = Depends(verify_credentials),db: Session = Depends(get_db)):
+@app.get("/referral-sources")
+def get_referral_sources(auth = Depends(verify_credentials), db: Session = Depends(get_db)):
     try:        
+        sources = db.query(model.ReferralSource).all()
+        if len(sources) == 0:
+            return {"message": "No referral sources found."}
+        else:
+            return {"items": sources}
+    except Exception as e:
+        import traceback
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={"error": str(e), "traceback": traceback.format_exc()}
+        )
+
+@app.get("/payment-methods")
+def get_payment_methods(auth = Depends(verify_credentials), db: Session = Depends(get_db)):
+    try:        
+        methods = db.query(model.PaymentMethod).all()
+        if len(methods) == 0:
+            return {"message": "No payment methods found."}
+        else:
+            return {"items": methods}
+    except Exception as e:
+        import traceback
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={"error": str(e), "traceback": traceback.format_exc()}
+        )
+@app.get("/plan-features")
+def get_plan_features(auth = Depends(verify_credentials), db: Session = Depends(get_db)):
+    try:        
+        features = db.query(model.PlanFeature).all()
+        if len(features) == 0:
+            return {"message": "No plan features found."}
+        else:
+            return {"items": features}
+    except Exception as e:
+        import traceback
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={"error": str(e), "traceback": traceback.format_exc()}
+        )
+
+# Main Entity Endpoints
+@app.get("/users", response_model=Page[User])
+def get_users(auth = Depends(verify_credentials), db: Session = Depends(get_db)):
+    try:
+        return paginate(db, select(model.User))
+    except Exception as e:
+        import traceback
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={"error": str(e), "traceback": traceback.format_exc()}
+        )
+        
+@app.get("/plans")
+def get_plans(auth = Depends(verify_credentials), db: Session = Depends(get_db)):
+    try:
         plans = db.query(model.Plan).all()
         if len(plans) == 0:
             return {"message": "No plans found."}
         else:
-            return {"plans": plans}
+            return {"items": plans}
     except Exception as e:
         import traceback
-        return {"error": str(e), "traceback": traceback.format_exc()}
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={"error": str(e), "traceback": traceback.format_exc()}
+        )
     
-@app.get("/subscriptions")
+@app.get("/subscriptions", response_model=Page[Subscription])
 def get_subscriptions(auth = Depends(verify_credentials), db: Session = Depends(get_db)):
-    try:        
-        subscriptions = db.query(model.Subscription).all()
-        if len(subscriptions) == 0:
-            return {"message": "No subscriptions found."}
-        else:
-            return {"subscriptions": subscriptions}
+    try:
+        return paginate(db, select(model.Subscription))
     except Exception as e:
         import traceback
-        return {"error": str(e), "traceback": traceback.format_exc()}
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={"error": str(e), "traceback": traceback.format_exc()}
+        )
     
 
-@app.get("/usages")
+@app.get("/usages", response_model=Page[Usage])
 def get_usages(auth = Depends(verify_credentials), db: Session = Depends(get_db)):
-    try:        
-        usages = db.query(model.Usage).all()
-        if len(usages) == 0:
-            return {"message": "No usages found."}
-        else:
-            return {"usages": usages}
+    try:
+        return paginate(db, select(model.Usage))
     except Exception as e:
         import traceback
-        return {"error": str(e), "traceback": traceback.format_exc()}
-    
+        raise HTTPException(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            detail={"error": str(e), "traceback": traceback.format_exc()}
+        )
