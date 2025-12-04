@@ -1,7 +1,7 @@
 with plan_source as (
   select
     {{ adapter.quote("plan_id") }},
-    {{ adapter.quote("plan_name") }},
+    lower({{ adapter.quote("plan_name") }}) as plan_name,
     {{ adapter.quote("monthly_fee") }},
     {{ adapter.quote("max_users") }},
     {{ adapter.quote("api_limit") }},
