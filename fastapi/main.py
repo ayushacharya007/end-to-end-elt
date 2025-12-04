@@ -89,7 +89,7 @@ def get_regions(auth = Depends(verify_credentials), db: Session = Depends(get_db
         if len(regions) == 0:
             return {"message": "No regions found."}
         else:
-            return {"data": regions}
+            return {"items": regions}
     except Exception as e:
         import traceback
         raise HTTPException(
@@ -104,7 +104,7 @@ def get_referral_sources(auth = Depends(verify_credentials), db: Session = Depen
         if len(sources) == 0:
             return {"message": "No referral sources found."}
         else:
-            return {"data": sources}
+            return {"items": sources}
     except Exception as e:
         import traceback
         raise HTTPException(
@@ -119,7 +119,7 @@ def get_payment_methods(auth = Depends(verify_credentials), db: Session = Depend
         if len(methods) == 0:
             return {"message": "No payment methods found."}
         else:
-            return {"data": methods}
+            return {"items": methods}
     except Exception as e:
         import traceback
         raise HTTPException(
@@ -133,7 +133,7 @@ def get_plan_features(auth = Depends(verify_credentials), db: Session = Depends(
         if len(features) == 0:
             return {"message": "No plan features found."}
         else:
-            return {"data": features}
+            return {"items": features}
     except Exception as e:
         import traceback
         raise HTTPException(
@@ -160,7 +160,7 @@ def get_plans(auth = Depends(verify_credentials), db: Session = Depends(get_db))
         if len(plans) == 0:
             return {"message": "No plans found."}
         else:
-            return {"data": plans}
+            return {"items": plans}
     except Exception as e:
         import traceback
         raise HTTPException(

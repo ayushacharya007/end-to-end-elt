@@ -12,3 +12,6 @@ fastapi-pagination[sqlalchemy]
 # Type hints (included with Python 3.9+, but explicit for older versions)
 typing-extensions==4.15.0
 python-dotenv>=1.2.1
+
+# Pydantic models
+pydantic[email]>=2.12.4
